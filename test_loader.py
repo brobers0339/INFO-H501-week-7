@@ -4,6 +4,7 @@ from loader import *
 
 class TestLoader(unittest.TestCase):
     def test_valid_locations(self):
+        
         '''
         Test valid locations with functions from loader.py file.
 
@@ -16,9 +17,10 @@ class TestLoader(unittest.TestCase):
                Dataframe containing found geolocation data where the given location name, latitude, longitude, 
                 and location type are all columns.        
         '''
-        geo = get_geolocator()
         test_locations = ['Museum of Modern Art', 'USS Alabama Battleship Memorial']
-        geo_df = build_geo_dataframe(test_locations, geo)
+        loader = Loader(test_locations)
+        geo = loader.get_geolocator()
+        geo_df = loader.build_geo_dataframe(geo)
         return geo_df
 
     def test_invalid_location(self):
@@ -38,9 +40,10 @@ class TestLoader(unittest.TestCase):
                 tests to ensure that None types are found within the results of the location data and filled
                 in to the dataframe properly.
         '''
-        geolocator = get_geolocator()
-        result = fetch_location_data(geolocator, ["asdfqwer1234"])
-        df = build_geo_dataframe(["asdfqwer1234"], geolocator)
+        loader = Loader(['asdfqwer1234'])
+        geolocator = loader.get_geolocator()
+        result = loader.fetch_location_data(geolocator, ["asdfqwer1234"])
+        df = loader.build_geo_dataframe(geolocator)
         self.assertTrue(any(value is None for value in result.values()), 
                           "A nonexistent location should have an empty result.")
         return df
