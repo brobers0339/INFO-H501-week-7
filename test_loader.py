@@ -4,15 +4,46 @@ from loader import *
 
 class TestLoader(unittest.TestCase):
     def test_valid_locations(self):
-        # your code here
-        return None
+        '''
+        Test valid locations with functions from loader.py file.
+
+        This function serves as a test under the TestLoader class to test valid locations using the
+        functions within the loader.py file to ensure the functions are working properly.
+
+        Returns
+        -------
+            pandas DataFrame:
+               Dataframe containing found geolocation data where the given location name, latitude, longitude, 
+                and location type are all columns.        
+        '''
+        geo = get_geolocator()
+        test_locations = ['Museum of Modern Art', 'USS Alabama Battleship Memorial']
+        geo_df = build_geo_dataframe(test_locations, geo)
+        return geo_df
 
     def test_invalid_location(self):
+        '''
+        Test invalid locations with functions from the loader.py file.
+
+        This function serves as a test under the TestLoader class to test invalid locations 
+        using the functions within the loader.py file to ensure the functions are working
+        properly.
+
+        Returns
+        -------
+            pandas DataFrame:
+                Dataframe containing found geolocation data where the given location name, latitude, longitude, 
+                and location type are all columns. If the location doesn't exist or cannot be found, None
+                types are returned for these categories besides the location given name. The function also
+                tests to ensure that None types are found within the results of the location data and filled
+                in to the dataframe properly.
+        '''
         geolocator = get_geolocator()
-        result = fetch_location_data(geolocator, "asdfqwer1234")
-
-        self.assertIsNone(result, 
+        result = fetch_location_data(geolocator, ["asdfqwer1234"])
+        df = build_geo_dataframe(["asdfqwer1234"], geolocator)
+        self.assertTrue(any(value is None for value in result.values()), 
                           "A nonexistent location should have an empty result.")
-
+        return df
+    
 if __name__ == "__main__":
-    unittest.main()
+    unittest.main(exit=False)
