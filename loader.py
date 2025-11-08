@@ -23,7 +23,6 @@ class Loader():
         try:
             location = geolocator.geocode(loc)
         except:
-            print(f"-- {e} --:\n\t-->", loc)
             return None
     
         if location is None:

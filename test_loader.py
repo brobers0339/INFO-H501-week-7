@@ -21,7 +21,37 @@ class TestLoader(unittest.TestCase):
         loader = Loader(test_locations)
         geo = loader.get_geolocator()
         geo_df = loader.build_geo_dataframe(geo)
-        return geo_df
+        
+        expected = {
+            'Museum of Modern Art': (40.7614327, -73.9776216),
+            'USS Alabama Battleship Memorial': (30.3314265, -87.9512903)
+        }
+        
+        # Tolerance in degrees (~0.01 degrees ≈ 1.1 km). Adjust if you need stricter/looser checks.
+        delta = 0.05
+
+        # Ensure we have results for each requested location and assert closeness
+        for _, row in geo_df.iterrows():
+            name = row.get('location')
+            lat = row.get('latitude')
+            lon = row.get('longitude')
+
+            # Ensure geocoding returned values
+            self.assertIsNotNone(lat, f"Latitude for '{name}' should not be None")
+            self.assertIsNotNone(lon, f"Longitude for '{name}' should not be None")
+
+            if name in expected:
+                exp_lat, exp_lon = expected[name]
+                # Use assertAlmostEqual with delta to compare floating point values
+                self.assertAlmostEqual(lat, exp_lat, delta=delta,
+                                       msg=f"Latitude for '{name}' not within {delta} degrees of expected")
+                self.assertAlmostEqual(lon, exp_lon, delta=delta,
+                                       msg=f"Longitude for '{name}' not within {delta} degrees of expected")
+            else:
+                # If an unexpected location appears, at least ensure latitude/longitude are floats
+                self.assertIsInstance(lat, float)
+                self.assertIsInstance(lon, float)
+
 
     def test_invalid_location(self):
         '''
@@ -46,7 +76,8 @@ class TestLoader(unittest.TestCase):
         df = loader.build_geo_dataframe(geolocator)
         self.assertTrue(any(value is None for value in result.values()), 
                           "A nonexistent location should have an empty result.")
-        return df
-    
+        self.assertTrue(df['latitude'].isnull().all() and df['longitude'].isnull().all(),
+                          "DataFrame should contain None for latitude and longitude of invalid locations.")
+        
 if __name__ == "__main__":
     unittest.main(exit=False)
