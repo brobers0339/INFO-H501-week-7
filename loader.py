@@ -38,6 +38,7 @@ class Loader():
 if __name__ == "__main__":
     locations = ["Museum of Modern Art", "iuyt8765(*&)", "Alaska", "Franklin's Barbecue", "Burj Khalifa"]
     loader = Loader(locations)
-    df = loader.build_geo_dataframe()
+    geolocator = loader.get_geolocator()
+    df = loader.build_geo_dataframe(geolocator)
 
     df.to_csv("./geo_data.csv")

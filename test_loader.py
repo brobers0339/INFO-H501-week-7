@@ -53,7 +53,6 @@ class TestLoader(unittest.TestCase):
         loader = Loader(['asdfqwer1234'])
         geolocator = loader.get_geolocator()
         result = loader.fetch_location_data(geolocator, ["asdfqwer1234"])
-        df = loader.build_geo_dataframe(geolocator)
         
         # Check that the invalid location returns None values
         self.assertTrue(any(value is None for value in result.values()), 
